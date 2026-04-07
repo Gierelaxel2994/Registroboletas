@@ -3,203 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BETA Cash Technology - Corporate v9.1</title>
+    <title>BETA Cash Technology | Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         
-        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; color: #1f2937; }
+        body { background-color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; }
 
         .app-container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 40px auto;
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            border-top: 8px solid #e30613;
-            overflow: hidden;
+            width: 100%; max-width: 1100px; margin: 40px auto;
+            background: white; border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f1f5f9; overflow: hidden;
         }
 
-        @media (max-width: 768px) {
-            .app-container { margin: 0; border-radius: 0; min-height: 100vh; }
-        }
+        @media (max-width: 768px) { .app-container { margin: 0; border-radius: 0; min-height: 100vh; } }
 
-        .logo-header { cursor: pointer; user-select: none; transition: transform 0.2s; }
-        .logo-header:active { transform: scale(0.95); }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 14px;
-            background-color: #f9fafb;
+        /* Estilo de Inputs */
+        .input-group label { display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; margin-left: 4px; }
+        .custom-input {
+            width: 100%; padding: 14px 18px; background: #f1f5f9; border: 2px solid transparent;
+            border-radius: 16px; font-size: 14px; font-weight: 600; transition: all 0.2s ease;
         }
-        input:focus, select:focus, textarea:focus {
-            border-color: #e30613;
-            background-color: white;
-            outline: none;
-        }
+        .custom-input:focus { background: white; border-color: #e30613; outline: none; box-shadow: 0 0 0 4px rgba(227, 6, 19, 0.1); }
 
-        .btn-submit {
-            background-color: #e30613;
-            color: white;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 18px;
-            border-radius: 14px;
-            width: 100%;
-            transition: 0.3s;
+        /* Panel de Sugerencias */
+        .suggestion-panel {
+            position: absolute; z-index: 50; width: 100%; background: white;
+            border-radius: 16px; margin-top: 8px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid #f1f5f9; max-height: 200px; overflow-y: auto; display: none;
         }
+        .suggestion-item { padding: 12px 16px; font-size: 13px; font-weight: 700; cursor: pointer; border-bottom: 1px solid #f8fafc; color: #475569; }
+        .suggestion-item:hover { background: #fef2f2; color: #e30613; }
 
-        /* Estilos Admin */
+        /* Botones */
+        .btn-primary {
+            width: 100%; padding: 20px; background: #e30613; color: white;
+            border-radius: 18px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; transition: 0.3s; box-shadow: 0 10px 20px -5px rgba(227, 6, 19, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); background: #c00511; box-shadow: 0 15px 25px -5px rgba(227, 6, 19, 0.4); }
+
+        /* Admin UI */
         #admin-modal, #pin-modal { display: none; position: fixed; inset: 0; z-index: 1000; align-items: center; justify-content: center; }
-        .modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-blur: 8px; }
-        .pin-dot { width: 14px; height: 14px; border: 2px solid #4b5563; border-radius: 50%; }
+        .modal-blur { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.9); backdrop-blur: 12px; }
+        .pin-dot { width: 14px; height: 14px; border: 2px solid #334155; border-radius: 50%; transition: 0.3s; }
         .pin-dot.filled { background: #e30613; border-color: #e30613; transform: scale(1.2); }
-        .num-btn { width: 65px; height: 65px; border-radius: 50%; background: #1f2937; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 1px solid #374151; }
-        .num-btn:active { background: #e30613; }
+        .num-key { width: 70px; height: 70px; border-radius: 20px; background: #1e293b; color: white; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .num-key:active { background: #e30613; transform: scale(0.9); }
     </style>
 </head>
-<body class="p-0 md:p-6">
+<body>
 
 <div class="app-container">
-    <div class="p-8 text-center border-b border-gray-100">
-        <img src="logo.png" alt="BETA" class="h-16 mx-auto mb-4 logo-header" id="beta-logo">
-        <h2 class="text-xs font-black uppercase tracking-[0.3em] text-gray-400">Panel de Registro Oficial</h2>
+    <div class="p-10 text-center border-b border-slate-50">
+        <img src="logo.png" alt="BETA" class="h-14 mx-auto mb-4 cursor-pointer" id="beta-logo">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Service Report Management</p>
     </div>
 
-    <form id="serviceForm" class="p-8 space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-                <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Cliente / Empresa</label>
-                <input type="text" id="cliente" required placeholder="Ej: Banco General">
+    <form id="serviceForm" class="p-10 space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="input-group relative">
+                <label>Cliente / Empresa</label>
+                <input type="text" id="cliente" class="custom-input" placeholder="Buscar o escribir cliente..." autocomplete="off">
+                <div id="client-suggestions" class="suggestion-panel"></div>
             </div>
-            <div class="space-y-2">
-                <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Técnico Responsable</label>
-                <select id="tecnico" required>
+            <div class="input-group">
+                <label>Técnico Responsable</label>
+                <select id="tecnico" class="custom-input">
                     <option value="" disabled selected>Seleccione técnico</option>
-                    <option>Adriel Aizpurua</option>
-                    <option>Ellery Mendoza</option>
-                    <option>Axel De Leon</option>
-                    <option>Ismael Peñalba</option>
+                    <option>Adriel Aizpurua</option><option>Ellery Mendoza</option>
+                    <option>Axel De Leon</option><option>Ismael Peñalba</option>
                 </select>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-                <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Tipo de Intervención</label>
-                <select id="tipo" required>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="input-group">
+                <label>Tipo de Servicio</label>
+                <select id="tipo" class="custom-input">
                     <option>Mantenimiento Preventivo</option>
                     <option>Incidencias / Fallas</option>
                     <option>Capacitación Técnica</option>
                 </select>
             </div>
-            <div class="space-y-2">
-                <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">S/N Equipo</label>
-                <input type="text" id="sn" required placeholder="Número de serie">
+            <div class="input-group">
+                <label>S/N Equipo</label>
+                <input type="text" id="sn" class="custom-input" placeholder="Serie del equipo">
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-                <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Fecha de Visita</label>
-                <input type="date" id="fecha" required>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="input-group">
+                <label>Fecha de Visita</label>
+                <input type="date" id="fecha" class="custom-input">
             </div>
-            <div class="space-y-2">
-                <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Rango Horario</label>
-                <div class="flex items-center gap-2">
-                    <input type="time" id="h_inicio" required>
-                    <span class="text-gray-400 font-bold">a</span>
-                    <input type="time" id="h_fin" required>
+            <div class="input-group">
+                <label>Horario</label>
+                <div class="flex items-center gap-3">
+                    <input type="time" id="h_inicio" class="custom-input">
+                    <span class="font-bold text-slate-300">/</span>
+                    <input type="time" id="h_fin" class="custom-input">
                 </div>
             </div>
         </div>
 
-        <div class="space-y-2">
-            <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Descripción del Trabajo</label>
-            <textarea id="descripcion" rows="3" required placeholder="Resumen de actividades..."></textarea>
+        <div class="input-group">
+            <label>Descripción del Trabajo</label>
+            <textarea id="descripcion" rows="4" class="custom-input" placeholder="Detalle técnico de la visita..."></textarea>
         </div>
 
-        <button type="submit" id="btn-enviar" class="btn-submit">Guardar Reporte</button>
-        <div id="status" class="hidden p-4 rounded-xl text-center font-bold text-sm"></div>
+        <button type="submit" id="btn-enviar" class="btn-primary">Sincronizar Reporte</button>
+        <div id="status" class="hidden p-4 rounded-2xl text-center font-bold text-sm"></div>
     </form>
 </div>
 
 <div id="pin-modal">
-    <div class="modal-overlay"></div>
-    <div class="relative bg-gray-900 p-8 rounded-[2.5rem] w-80 text-center border border-gray-700 shadow-2xl">
-        <h3 class="text-white font-black text-xs uppercase tracking-widest mb-6">Acceso Administrador</h3>
-        <div class="flex justify-center gap-4 mb-8">
+    <div class="modal-blur"></div>
+    <div class="relative bg-slate-900 p-10 rounded-[40px] w-[350px] text-center border border-slate-800 shadow-2xl">
+        <h3 class="text-white font-black text-xs uppercase tracking-widest mb-8">Acceso de Seguridad</h3>
+        <div class="flex justify-center gap-4 mb-10">
             <div class="pin-dot" id="dot-0"></div><div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div><div class="pin-dot" id="dot-3"></div>
         </div>
         <div class="grid grid-cols-3 gap-4">
-            <button onclick="pressPin('1')" class="num-btn">1</button>
-            <button onclick="pressPin('2')" class="num-btn">2</button>
-            <button onclick="pressPin('3')" class="num-btn">3</button>
-            <button onclick="pressPin('4')" class="num-btn">4</button>
-            <button onclick="pressPin('5')" class="num-btn">5</button>
-            <button onclick="pressPin('6')" class="num-btn">6</button>
-            <button onclick="pressPin('7')" class="num-btn">7</button>
-            <button onclick="pressPin('8')" class="num-btn">8</button>
-            <button onclick="pressPin('9')" class="num-btn">9</button>
-            <button onclick="clearPin()" class="num-btn text-red-500 text-[10px]">BORRAR</button>
-            <button onclick="pressPin('0')" class="num-btn">0</button>
-            <button onclick="closeModals()" class="num-btn text-gray-500 text-[10px]">SALIR</button>
+            <script>
+                for(let i=1; i<=9; i++) document.write(`<button onclick="pressPin('${i}')" class="num-key">${i}</button>`);
+            </script>
+            <button onclick="clearPin()" class="num-key text-red-500 text-xs">DEL</button>
+            <button onclick="pressPin('0')" class="num-key">0</button>
+            <button onclick="closeModals()" class="num-key text-slate-500 text-xs">ESC</button>
         </div>
-        <p class="text-[9px] text-gray-500 mt-6 uppercase">Puedes usar el teclado numérico</p>
     </div>
 </div>
 
 <div id="admin-modal">
-    <div class="modal-overlay"></div>
-    <div class="relative bg-white w-[98%] max-w-7xl h-[95vh] rounded-3xl flex flex-col overflow-hidden shadow-2xl">
-        <div class="bg-gray-900 p-6 flex justify-between items-center text-white">
-            <h2 class="font-black italic text-xl tracking-tighter">BETA <span class="text-red-600">ADMIN CORE</span></h2>
-            <button onclick="closeModals()" class="bg-gray-800 h-10 w-10 rounded-full hover:bg-red-600 transition-colors">&times;</button>
+    <div class="modal-blur"></div>
+    <div class="relative bg-white w-[96%] max-w-[1300px] h-[92vh] rounded-[40px] flex flex-col overflow-hidden shadow-2xl">
+        <div class="bg-slate-900 p-8 flex justify-between items-center text-white">
+            <div>
+                <h2 class="font-black italic text-2xl tracking-tighter">BETA <span class="text-red-600">CORE ADMIN</span></h2>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Panel de Control General v9.2</p>
+            </div>
+            <button onclick="closeModals()" class="h-12 w-12 rounded-2xl bg-slate-800 flex items-center justify-center hover:bg-red-600 transition-all text-xl">&times;</button>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6 bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                <div class="space-y-1"><label class="text-[9px] font-black text-gray-400 uppercase">Cliente</label><input type="text" id="f-cliente" oninput="loadDashboard()" class="!py-2"></div>
-                <div class="space-y-1"><label class="text-[9px] font-black text-gray-400 uppercase">Técnico</label>
-                    <select id="f-tecnico" onchange="loadDashboard()" class="!py-2">
-                        <option value="">Todos</option>
-                        <option>Adriel Aizpurua</option><option>Ellery Mendoza</option><option>Axel De Leon</option><option>Ismael Peñalba</option>
+        <div class="flex-1 overflow-y-auto p-8 bg-slate-50">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8 bg-white p-6 rounded-3xl border border-slate-200">
+                <div class="input-group"><label>Cliente</label><input type="text" id="f-cliente" oninput="applyFilters()" class="!py-2 !bg-slate-50"></div>
+                <div class="input-group"><label>Técnico</label>
+                    <select id="f-tecnico" onchange="applyFilters()" class="!py-2 !bg-slate-50">
+                        <option value="">Todos</option><option>Adriel Aizpurua</option><option>Ellery Mendoza</option><option>Axel De Leon</option><option>Ismael Peñalba</option>
                     </select>
                 </div>
-                <div class="space-y-1"><label class="text-[9px] font-black text-gray-400 uppercase">Tipo</label>
-                    <select id="f-tipo" onchange="loadDashboard()" class="!py-2">
-                        <option value="">Todos</option>
-                        <option>Mantenimiento Preventivo</option><option>Incidencias / Fallas</option><option>Capacitación Técnica</option>
+                <div class="input-group"><label>Tipo</label>
+                    <select id="f-tipo" onchange="applyFilters()" class="!py-2 !bg-slate-50">
+                        <option value="">Todos</option><option>Mantenimiento Preventivo</option><option>Incidencias / Fallas</option><option>Capacitación Técnica</option>
                     </select>
                 </div>
-                <div class="space-y-1"><label class="text-[9px] font-black text-gray-400 uppercase">S/N</label><input type="text" id="f-sn" oninput="loadDashboard()" class="!py-2"></div>
-                <div class="space-y-1"><label class="text-[9px] font-black text-gray-400 uppercase">Fecha</label><input type="date" id="f-fecha" onchange="loadDashboard()" class="!py-2"></div>
+                <div class="input-group"><label>S/N</label><input type="text" id="f-sn" oninput="applyFilters()" class="!py-2 !bg-slate-50"></div>
+                <div class="input-group"><label>Fecha</label><input type="date" id="f-fecha" onchange="applyFilters()" class="!py-2 !bg-slate-50"></div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-                <div class="lg:col-span-3 bg-white p-5 rounded-2xl border border-gray-200 h-72">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+                <div class="lg:col-span-3 bg-white p-8 rounded-[32px] border border-slate-200 h-[350px]">
                     <canvas id="adminChart"></canvas>
                 </div>
-                <div class="bg-red-600 p-6 rounded-2xl flex flex-col justify-center items-center text-white shadow-xl shadow-red-100">
-                    <span id="total-count" class="text-6xl font-black">0</span>
-                    <p class="text-[10px] font-bold uppercase mt-4 opacity-80">Registros Encontrados</p>
+                <div class="bg-white p-8 rounded-[32px] border border-slate-200 flex flex-col justify-center items-center shadow-sm">
+                    <div class="h-24 w-24 bg-red-50 rounded-full flex items-center justify-center mb-6">
+                        <span id="total-count" class="text-5xl font-black text-red-600">0</span>
+                    </div>
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Servicios Totales</p>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            <div class="bg-white rounded-[32px] border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-900 text-white text-[10px] font-bold uppercase">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest">
                             <tr>
-                                <th class="p-4">Fecha</th><th class="p-4">Cliente</th><th class="p-4">Técnico</th><th class="p-4">Tipo</th><th class="p-4">S/N</th><th class="p-4">Acción</th>
+                                <th class="p-6">Fecha</th><th class="p-6">Cliente</th><th class="p-6">Técnico</th><th class="p-6">Tipo</th><th class="p-6">Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-table-body" class="divide-y divide-gray-100"></tbody>
+                        <tbody id="admin-table-body" class="divide-y divide-slate-50"></tbody>
                     </table>
                 </div>
             </div>
@@ -211,87 +197,97 @@
     const URL = "https://ghzfpwgkwtvsdzdbmebn.supabase.co/rest/v1/registros_visitas";
     const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoemZwd2drd3R2c2R6ZGJtZWJuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODQ1ODMsImV4cCI6MjA4OTg2MDU4M30.96vlwGH-jfUbEwHeWm0VjFViLtRta19NndX--NOppl8";
 
+    let rawData = [];
     let timer, pin = "";
     const MASTER_PIN = "2026";
+    let myChart = null;
+
+    // --- AUTOSUGERENCIAS CLIENTE ---
+    const clientInput = document.getElementById('cliente');
+    const suggestionBox = document.getElementById('client-suggestions');
+
+    async function initSuggestions() {
+        try {
+            const res = await fetch(URL + "?select=cliente", { headers: { "apikey": KEY, "Authorization": "Bearer " + KEY } });
+            const data = await res.json();
+            const uniqueClients = [...new Set(data.map(i => i.cliente))];
+            
+            clientInput.oninput = (e) => {
+                const val = e.target.value.toLowerCase();
+                suggestionBox.innerHTML = "";
+                if(!val) { suggestionBox.style.display = 'none'; return; }
+                
+                const matches = uniqueClients.filter(c => c.toLowerCase().includes(val)).slice(0, 6);
+                if(matches.length > 0) {
+                    matches.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = "suggestion-item";
+                        div.innerText = m;
+                        div.onclick = () => { clientInput.value = m; suggestionBox.style.display = 'none'; };
+                        suggestionBox.appendChild(div);
+                    });
+                    suggestionBox.style.display = 'block';
+                } else { suggestionBox.style.display = 'none'; }
+            };
+        } catch(e) {}
+    }
+
+    // --- ACCESO ADMIN ---
     const logo = document.getElementById('beta-logo');
-    const pinModal = document.getElementById('pin-modal');
-
-    // --- ACCESO ADMIN (PULSACIÓN LARGA) ---
-    logo.onmousedown = () => timer = setTimeout(openPin, 2000);
+    logo.onmousedown = () => timer = setTimeout(() => { pin = ""; updateDots(); document.getElementById('pin-modal').style.display='flex'; }, 2000);
     logo.onmouseup = () => clearTimeout(timer);
-    logo.ontouchstart = (e) => { e.preventDefault(); timer = setTimeout(openPin, 2000); };
-    logo.ontouchend = () => clearTimeout(timer);
-
-    function openPin() { pin = ""; updateDots(); pinModal.style.display = 'flex'; }
-    function closeModals() { pinModal.style.display = 'none'; document.getElementById('admin-modal').style.display = 'none'; }
-    function updateDots() { for(let i=0; i<4; i++) document.getElementById(`dot-${i}`).classList.toggle('filled', i < pin.length); }
-    function clearPin() { pin = ""; updateDots(); }
+    logo.ontouchstart = (e) => { e.preventDefault(); timer = setTimeout(() => { pin = ""; updateDots(); document.getElementById('pin-modal').style.display='flex'; }, 2000); };
 
     function pressPin(n) {
         if(pin.length < 4) {
             pin += n; updateDots();
             if(pin.length === 4) {
-                if(pin === MASTER_PIN) {
-                    pinModal.style.display = 'none';
-                    document.getElementById('admin-modal').style.display = 'flex';
-                    loadDashboard();
-                } else { alert("PIN Incorrecto"); clearPin(); }
+                if(pin === MASTER_PIN) { closeModals(); fetchAllData(); document.getElementById('admin-modal').style.display='flex'; }
+                else { alert("Acceso Denegado"); pin = ""; updateDots(); }
             }
         }
     }
+    window.onkeydown = (e) => { if(document.getElementById('pin-modal').style.display === 'flex') { if(e.key >= '0' && e.key <= '9') pressPin(e.key); if(e.key === 'Backspace') { pin = pin.slice(0,-1); updateDots(); } if(e.key === 'Escape') closeModals(); } };
+    function updateDots() { for(let i=0; i<4; i++) document.getElementById(`dot-${i}`).classList.toggle('filled', i < pin.length); }
+    function clearPin() { pin = ""; updateDots(); }
+    function closeModals() { document.getElementById('pin-modal').style.display = 'none'; document.getElementById('admin-modal').style.display = 'none'; }
 
-    // --- ESCUCHADOR DE TECLADO PARA EL PIN ---
-    window.addEventListener('keydown', (e) => {
-        if (pinModal.style.display === 'flex') {
-            if (e.key >= '0' && e.key <= '9') {
-                pressPin(e.key);
-            } else if (e.key === 'Backspace') {
-                pin = pin.slice(0, -1);
-                updateDots();
-            } else if (e.key === 'Escape') {
-                closeModals();
-            }
-        }
-    });
+    // --- FILTRADO LOCAL (VELOCIDAD RAYO) ---
+    async function fetchAllData() {
+        const res = await fetch(URL + "?order=fecha.desc", { headers: { "apikey": KEY, "Authorization": "Bearer " + KEY } });
+        rawData = await res.json();
+        applyFilters();
+    }
 
-    // --- LÓGICA DASHBOARD ---
-    let myChart = null;
-
-    async function loadDashboard() {
+    function applyFilters() {
         const fClie = document.getElementById('f-cliente').value.toLowerCase();
         const fTech = document.getElementById('f-tecnico').value;
         const fTipo = document.getElementById('f-tipo').value;
         const fSn = document.getElementById('f-sn').value.toLowerCase();
         const fDate = document.getElementById('f-fecha').value;
 
-        try {
-            const res = await fetch(URL + "?order=fecha.desc", { headers: { "apikey": KEY, "Authorization": "Bearer " + KEY } });
-            const data = await res.json();
+        const filtered = rawData.filter(i => {
+            return (!fClie || i.cliente.toLowerCase().includes(fClie)) &&
+                   (!fTech || i.tecnico === fTech) &&
+                   (!fTipo || i.tipo === fTipo) &&
+                   (!fSn || i.sn.toLowerCase().includes(fSn)) &&
+                   (!fDate || i.fecha === fDate);
+        });
 
-            const filtered = data.filter(i => {
-                return (!fClie || i.cliente.toLowerCase().includes(fClie)) &&
-                       (!fTech || i.tecnico === fTech) &&
-                       (!fTipo || i.tipo === fTipo) &&
-                       (!fSn || i.sn.toLowerCase().includes(fSn)) &&
-                       (!fDate || i.fecha === fDate);
-            });
-
-            document.getElementById('total-count').innerText = filtered.length;
-            renderTable(filtered);
-            renderChart(filtered);
-        } catch (e) { console.error(e); }
+        document.getElementById('total-count').innerText = filtered.length;
+        renderTable(filtered);
+        renderChart(filtered);
     }
 
     function renderTable(data) {
         const body = document.getElementById('admin-table-body');
         body.innerHTML = data.map(i => `
-            <tr class="hover:bg-gray-50 border-b border-gray-100">
-                <td class="p-4 font-bold text-gray-400">${i.fecha}</td>
-                <td class="p-4 font-black uppercase text-gray-800">${i.cliente}</td>
-                <td class="p-4 text-gray-600 font-semibold">${i.tecnico}</td>
-                <td class="p-4 text-[10px] uppercase font-bold text-red-600">${i.tipo}</td>
-                <td class="p-4 font-mono text-xs text-gray-500">${i.sn}</td>
-                <td class="p-4"><button onclick="alert('${i.descripcion.replace(/'/g, "\\'")}')" class="text-blue-600 font-bold text-xs hover:underline">DETALLES</button></td>
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="p-6 font-bold text-slate-400 text-xs">${i.fecha}</td>
+                <td class="p-6 font-extrabold text-slate-800 uppercase text-xs">${i.cliente}</td>
+                <td class="p-6 text-slate-600 font-semibold text-xs">${i.tecnico}</td>
+                <td class="p-6"><span class="text-[9px] bg-red-50 text-red-600 px-3 py-1 rounded-full font-black uppercase">${i.tipo}</span></td>
+                <td class="p-6"><button onclick="alert('${i.descripcion.replace(/'/g, "\\'")}')" class="text-blue-600 font-bold text-[10px] hover:underline uppercase tracking-tighter">Detalles</button></td>
             </tr>
         `).join('');
     }
@@ -306,23 +302,17 @@
             type: 'bar',
             data: {
                 labels: Object.keys(stats),
-                datasets: [{
-                    label: 'Registros',
-                    data: Object.values(stats),
-                    backgroundColor: '#e30613',
-                    borderRadius: 10
-                }]
+                datasets: [{ data: Object.values(stats), backgroundColor: '#e30613', borderRadius: 12, barThickness: 40 }]
             },
-            options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
         });
     }
 
-    // --- ENVÍO FORMULARIO ---
+    // --- ENVÍO ---
     document.getElementById('serviceForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btn-enviar');
         const status = document.getElementById('status');
-
         const data = {
             cliente: document.getElementById('cliente').value,
             tecnico: document.getElementById('tecnico').value,
@@ -333,10 +323,11 @@
             descripcion: document.getElementById('descripcion').value
         };
 
-        btn.disabled = true;
-        btn.innerText = "ENVIANDO REPORTE...";
-        status.className = "block p-4 rounded-xl text-center font-bold text-sm bg-gray-100 text-gray-500";
-        status.innerText = "Sincronizando con base de datos...";
+        if(!data.cliente || !data.tecnico) return alert("Complete los campos obligatorios");
+
+        btn.disabled = true; btn.innerText = "PROCESANDO...";
+        status.className = "block p-4 rounded-2xl bg-slate-100 text-slate-500 font-bold";
+        status.innerText = "Guardando en la nube...";
 
         try {
             const res = await fetch(URL, {
@@ -344,22 +335,18 @@
                 headers: { "apikey": KEY, "Authorization": "Bearer " + KEY, "Content-Type": "application/json", "Prefer": "return=minimal" },
                 body: JSON.stringify(data)
             });
-
             if (res.ok) {
-                status.className = "block p-4 rounded-xl text-center font-bold text-sm bg-green-100 text-green-700";
-                status.innerText = "✅ REPORTE GUARDADO CON ÉXITO";
-                e.target.reset();
-                // Mantener el técnico seleccionado por comodidad
-                document.getElementById('tecnico').value = data.tecnico;
-            } else { throw new Error(); }
+                status.className = "block p-4 rounded-2xl bg-green-100 text-green-700 font-bold";
+                status.innerText = "REPORTE ALMACENADO CORRECTAMENTE";
+                e.target.reset(); initSuggestions();
+            } else throw new Error();
         } catch (e) {
-            status.className = "block p-4 rounded-xl text-center font-bold text-sm bg-red-100 text-red-700";
-            status.innerText = "❌ ERROR AL GUARDAR. REVISE SU CONEXIÓN.";
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Guardar Reporte";
-        }
+            status.className = "block p-4 rounded-2xl bg-red-100 text-red-700 font-bold";
+            status.innerText = "ERROR DE SINCRONIZACIÓN";
+        } finally { btn.disabled = false; btn.innerText = "Sincronizar Reporte"; }
     };
+
+    window.onload = initSuggestions;
 </script>
 </body>
 </html>
