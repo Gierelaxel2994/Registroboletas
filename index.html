@@ -22,6 +22,7 @@
 
         @media (max-width: 768px) { .app-container { margin: 0; border-radius: 0; min-height: 100vh; } }
 
+        /* Inputs */
         .input-group label { display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; margin-left: 4px; }
         .custom-input {
             width: 100%; padding: 14px 18px; background: #f1f5f9; border: 2px solid transparent;
@@ -29,6 +30,7 @@
         }
         .custom-input:focus { background: white; border-color: #e30613; outline: none; box-shadow: 0 0 0 4px rgba(227, 6, 19, 0.1); }
 
+        /* Sugerencias */
         .suggestion-panel {
             position: absolute; z-index: 50; width: 100%; background: white;
             border-radius: 16px; margin-top: 8px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
@@ -44,11 +46,13 @@
         }
         .btn-primary:hover { transform: translateY(-2px); background: #c00511; }
 
-        #admin-modal, #pin-modal { display: none; position: fixed; inset: 0; z-index: 1000; align-items: center; justify-content: center; }
-        .modal-blur { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); }
+        /* Modales */
+        #admin-modal, #pin-modal, #detail-modal { display: none; position: fixed; inset: 0; z-index: 1000; align-items: center; justify-content: center; }
+        .modal-blur { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
         .pin-dot { width: 14px; height: 14px; border: 2px solid #334155; border-radius: 50%; transition: 0.3s; }
         .pin-dot.filled { background: #e30613; border-color: #e30613; transform: scale(1.2); }
-        .num-key { width: 70px; height: 70px; border-radius: 20px; background: #1e293b; color: white; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .num-key { width: 70px; height: 70px; border-radius: 20px; background: #1e293b; color: white; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .num-key:active { background: #e30613; }
     </style>
 </head>
 <body>
@@ -117,15 +121,29 @@
     </form>
 </div>
 
-<div id="pin-modal"><div class="modal-blur"></div><div class="relative bg-slate-900 p-10 rounded-[40px] w-[350px] text-center border border-slate-800 shadow-2xl"><h3 class="text-white font-black text-xs uppercase tracking-widest mb-8">Acceso</h3><div class="flex justify-center gap-4 mb-10"><div class="pin-dot" id="dot-0"></div><div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div><div class="pin-dot" id="dot-3"></div></div><div class="grid grid-cols-3 gap-4"><script>for(let i=1;i<=9;i++)document.write(`<button onclick="pressPin('${i}')" class="num-key">${i}</button>`);</script><button onclick="clearPin()" class="num-key text-red-500 text-xs">DEL</button><button onclick="pressPin('0')" class="num-key">0</button><button onclick="closeModals()" class="num-key text-slate-500 text-xs">ESC</button></div></div></div>
+<div id="pin-modal">
+    <div class="modal-blur"></div>
+    <div class="relative bg-slate-900 p-10 rounded-[40px] w-[350px] text-center border border-slate-800 shadow-2xl">
+        <h3 class="text-white font-black text-xs uppercase tracking-widest mb-8">Acceso Seguridad</h3>
+        <div class="flex justify-center gap-4 mb-10">
+            <div class="pin-dot" id="dot-0"></div><div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div><div class="pin-dot" id="dot-3"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+            <script>for(let i=1;i<=9;i++)document.write(`<button onclick="pressPin('${i}')" class="num-key">${i}</button>`);</script>
+            <button onclick="clearPin()" class="num-key text-red-500 text-xs">DEL</button>
+            <button onclick="pressPin('0')" class="num-key">0</button>
+            <button onclick="closeModals()" class="num-key text-slate-500 text-xs">ESC</button>
+        </div>
+    </div>
+</div>
 
 <div id="admin-modal">
     <div class="modal-blur"></div>
     <div class="relative bg-white w-[96%] max-w-[1300px] h-[92vh] rounded-[40px] flex flex-col overflow-hidden shadow-2xl">
         <div class="bg-slate-900 p-8 flex justify-between items-center text-white">
-            <div><h2 class="font-black italic text-2xl tracking-tighter">BETA <span class="text-red-600">CORE ADMIN</span></h2><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Gestión Centralizada</p></div>
+            <div><h2 class="font-black italic text-2xl tracking-tighter">BETA <span class="text-red-600">CORE ADMIN</span></h2><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Gestión Histórica</p></div>
             <div class="flex gap-3">
-                <button onclick="generatePDF()" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase transition-all">Exportar PDF</button>
+                <button onclick="generatePDF()" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase transition-all">PDF Reporte</button>
                 <button onclick="closeModals()" class="h-10 w-10 rounded-xl bg-slate-800 flex items-center justify-center hover:bg-red-600 transition-all">&times;</button>
             </div>
         </div>
@@ -137,23 +155,37 @@
                 <div class="input-group"><label>S/N</label><input type="text" id="f-sn" oninput="applyFilters()" class="!py-2 custom-input !bg-slate-50"></div>
                 <div class="input-group"><label>Fecha</label><input type="date" id="f-fecha" onchange="applyFilters()" class="!py-2 custom-input !bg-slate-50"></div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
-                <div class="lg:col-span-3 bg-white p-8 rounded-[32px] border border-slate-200 h-[300px]"><canvas id="adminChart"></canvas></div>
-                <div class="bg-white p-8 rounded-[32px] border border-slate-200 flex flex-col justify-center items-center"><div class="h-20 w-20 bg-red-50 rounded-full flex items-center justify-center mb-4"><span id="total-count" class="text-4xl font-black text-red-600">0</span></div><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Servicios</p></div>
+            <div class="bg-white rounded-[32px] border border-slate-200 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                        <tr><th class="p-6">Fecha</th><th class="p-6">Cliente</th><th class="p-6">Técnico</th><th class="p-6">Tipo</th><th class="p-6">S/N</th><th class="p-6 text-center">Acción</th></tr>
+                    </thead>
+                    <tbody id="admin-table-body" class="divide-y divide-slate-50"></tbody>
+                </table>
             </div>
-            <div class="bg-white rounded-[32px] border border-slate-200 overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest"><tr><th class="p-6">Fecha</th><th class="p-6">Cliente</th><th class="p-6">Técnico</th><th class="p-6">Tipo</th><th class="p-6">S/N</th><th class="p-6">Acción</th></tr></thead><tbody id="admin-table-body" class="divide-y divide-slate-50"></tbody></table></div>
         </div>
+    </div>
+</div>
+
+<div id="detail-modal">
+    <div class="modal-blur" onclick="document.getElementById('detail-modal').style.display='none'"></div>
+    <div class="relative bg-white p-8 rounded-[32px] w-[90%] max-w-[500px] shadow-2xl">
+        <h4 class="font-black uppercase text-xs text-red-600 mb-4 tracking-widest">Descripción del Trabajo</h4>
+        <div id="detail-content" class="text-slate-700 text-sm leading-relaxed mb-6 font-medium bg-slate-50 p-6 rounded-2xl border border-slate-100 whitespace-pre-wrap"></div>
+        <button onclick="document.getElementById('detail-modal').style.display='none'" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold uppercase text-xs">Cerrar</button>
     </div>
 </div>
 
 <script>
     const URL = "https://ghzfpwgkwtvsdzdbmebn.supabase.co/rest/v1/registros_visitas";
     const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoemZwd2drd3R2c2R6ZGJtZWJuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODQ1ODMsImV4cCI6MjA4OTg2MDU4M30.96vlwGH-jfUbEwHeWm0VjFViLtRta19NndX--NOppl8";
-    let rawData = [], filteredData = [], timer, pin = "", MASTER_PIN = "2026", myChart = null;
+    let rawData = [], filteredData = [], timer, pin = "", MASTER_PIN = "2026";
 
+    // CARGA DE DATOS Y ORDEN
     async function refreshData() {
         try {
-            const res = await fetch(URL + "?order=fecha.desc", { headers: { "apikey": KEY, "Authorization": "Bearer " + KEY } });
+            // Ordenamos por id.desc para que el último ingresado esté arriba
+            const res = await fetch(`${URL}?order=id.desc`, { headers: { "apikey": KEY, "Authorization": "Bearer "+KEY } });
             rawData = await res.json();
             setupAutosuggest('cliente', 'client-suggestions', 'cliente');
             setupAutosuggest('sn', 'sn-suggestions', 'sn');
@@ -161,6 +193,7 @@
         } catch(e) { console.error(e); }
     }
 
+    // SUGERENCIAS
     function setupAutosuggest(inputId, boxId, field) {
         const input = document.getElementById(inputId), box = document.getElementById(boxId);
         input.oninput = () => {
@@ -177,6 +210,7 @@
         };
     }
 
+    // GESTIÓN DE PIN Y TECLADO
     const logo = document.getElementById('beta-logo');
     logo.onmousedown = () => timer = setTimeout(() => { pin=""; updateDots(); document.getElementById('pin-modal').style.display='flex'; }, 2000);
     logo.onmouseup = () => clearTimeout(timer);
@@ -185,15 +219,27 @@
         if(pin.length < 4) {
             pin += n; updateDots();
             if(pin.length === 4) {
-                if(pin === MASTER_PIN) { closeModals(); refreshData().then(() => { applyFilters(); document.getElementById('admin-modal').style.display='flex'; }); }
-                else { alert("Error"); pin=""; updateDots(); }
+                if(pin === MASTER_PIN) { 
+                    closeModals(); 
+                    refreshData().then(() => { applyFilters(); document.getElementById('admin-modal').style.display='flex'; }); 
+                } else { alert("Acceso Denegado"); pin=""; updateDots(); }
             }
         }
     }
+
+    window.addEventListener('keydown', (e) => {
+        if(document.getElementById('pin-modal').style.display === 'flex') {
+            if(e.key >= '0' && e.key <= '9') pressPin(e.key);
+            if(e.key === 'Backspace') { pin = pin.slice(0,-1); updateDots(); }
+            if(e.key === 'Escape') closeModals();
+        }
+    });
+
     function updateDots() { for(let i=0; i<4; i++) document.getElementById(`dot-${i}`).classList.toggle('filled', i<pin.length); }
     function closeModals() { document.getElementById('pin-modal').style.display='none'; document.getElementById('admin-modal').style.display='none'; }
     function clearPin() { pin=""; updateDots(); }
 
+    // FILTROS
     function applyFilters() {
         const fClie = document.getElementById('f-cliente').value.toLowerCase();
         const fTech = document.getElementById('f-tecnico').value;
@@ -208,44 +254,37 @@
             (!fSn || (i.sn && i.sn.toLowerCase().includes(fSn))) &&
             (!fDate || i.fecha === fDate)
         );
-
-        // ORDENAR POR FECHA DESCENDENTE (Lo más nuevo arriba)
-        filteredData.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-        document.getElementById('total-count').innerText = filteredData.length;
-        renderTable(filteredData); renderChart(filteredData);
+        renderTable(filteredData);
     }
 
     function renderTable(data) {
-        document.getElementById('admin-table-body').innerHTML = data.map(i => `
+        document.getElementById('admin-table-body').innerHTML = data.map((i, index) => `
             <tr class="hover:bg-slate-50 transition-colors">
                 <td class="p-6 font-bold text-slate-400 text-xs">${i.fecha}</td>
                 <td class="p-6 font-extrabold text-slate-800 uppercase text-xs">${i.cliente}</td>
                 <td class="p-6 text-slate-600 font-semibold text-xs">${i.tecnico}</td>
                 <td class="p-6"><span class="text-[9px] bg-red-50 text-red-600 px-3 py-1 rounded-full font-black uppercase">${i.tipo}</span></td>
                 <td class="p-6 font-mono text-[10px] text-slate-500">${i.sn || '---'}</td>
-                <td class="p-6"><button onclick="alert('${(i.descripcion||"").replace(/'/g,"\\'")}')" class="text-blue-600 font-bold text-[10px] hover:underline uppercase">Ver</button></td>
+                <td class="p-6 text-center">
+                    <button onclick="showDetail(${index})" class="bg-slate-100 hover:bg-red-600 hover:text-white text-slate-600 px-4 py-2 rounded-lg font-bold text-[10px] uppercase transition-all">Ver Detalle</button>
+                </td>
             </tr>
         `).join('');
     }
 
-    function renderChart(data) {
-        const stats = {}; data.forEach(i => stats[i.tecnico] = (stats[i.tecnico] || 0) + 1);
-        if(myChart) myChart.destroy();
-        myChart = new Chart(document.getElementById('adminChart'), {
-            type: 'bar',
-            data: { labels: Object.keys(stats), datasets: [{ data: Object.values(stats), backgroundColor: '#e30613', borderRadius: 8 }] },
-            options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
+    function showDetail(index) {
+        const item = filteredData[index];
+        document.getElementById('detail-content').innerText = item.descripcion || "Sin descripción.";
+        document.getElementById('detail-modal').style.display = 'flex';
     }
 
     function generatePDF() {
         const { jsPDF } = window.jspdf; const doc = new jsPDF();
-        doc.text("REPORTE BETA CASH TECHNOLOGY", 14, 15);
+        doc.setFontSize(14); doc.text("REPORTE HISTÓRICO - BETA CASH", 14, 15);
         doc.autoTable({
             head: [['Fecha', 'Cliente', 'Tecnico', 'Tipo', 'S/N']],
             body: filteredData.map(i => [i.fecha, i.cliente, i.tecnico, i.tipo, i.sn || '---']),
-            startY: 25, headStyles: { fillColor: [227, 6, 19] }
+            startY: 25, headStyles: { fillColor: [227, 6, 19] }, styles: { fontSize: 8 }
         });
         doc.save(`Reporte_Beta_${new Date().toISOString().slice(0,10)}.pdf`);
     }
@@ -260,14 +299,14 @@
             descripcion: document.getElementById('descripcion').value
         };
         if(!data.cliente || !data.tecnico) return alert("Faltan datos");
-        btn.disabled = true; btn.innerText = "ENVIANDO...";
+        btn.disabled = true; btn.innerText = "PROCESANDO...";
         try {
             const res = await fetch(URL, {
                 method: "POST", headers: { "apikey": KEY, "Authorization": "Bearer "+KEY, "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
-            if(res.ok) { st.className="block p-4 rounded-2xl bg-green-100 text-green-700 font-bold"; st.innerText="SINCRONIZADO"; e.target.reset(); refreshData(); }
-        } catch(e) { st.innerText="ERROR"; } finally { btn.disabled=false; btn.innerText="Sincronizar Reporte"; }
+            if(res.ok) { st.className="block p-4 rounded-2xl bg-green-100 text-green-700 font-bold mb-4"; st.innerText="REPORTE GUARDADO CON ÉXITO"; e.target.reset(); refreshData(); }
+        } catch(e) { st.innerText="ERROR DE CONEXIÓN"; } finally { btn.disabled=false; btn.innerText="Sincronizar Reporte"; }
     };
 
     window.onload = refreshData;
